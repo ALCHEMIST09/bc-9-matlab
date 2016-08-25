@@ -1,13 +1,15 @@
-import cmd, re
+import cmd, re, math
 
 class Matlab(cmd.Cmd):
     intro = 'Welcome to the MATLAB. Type help or ? to list commands.\n'
     prompt = 'matlab>>>'
     file = None
     
+    '''
+        Class variable to be used to persist properties
+        assigned to the class
+    '''
     class_vars = {}
-        
-    commands = ['ARRAY', 'MATRIX', 'ADD', 'MULTIPLY']
         
     def default(self, args):
         '''
@@ -23,10 +25,8 @@ class Matlab(cmd.Cmd):
             # Check if array contains semicolons, to determine
             # if it's a matrix
             if array.find(';') != -1:
-                array = array.strip('[] ')
-                array = array.replace(',', ' ')
-                array = array.replace(';', '\n')
-                Matlab.class_vars[identifier] = array
+                matrix = self.create_matrix(array)
+                Matlab.class_vars[identifier] = matrix
                 print(Matlab.class_vars[identifier])
             elif array.isalpha():
                 # Case of simple variable assignment
@@ -36,6 +36,11 @@ class Matlab(cmd.Cmd):
                 # Normal array
                 Matlab.class_vars[identifier] = array
                 print(Matlab.class_vars[identifier])
+        elif args.find('+') != -1:
+            # Case of adding a matrix and a number 
+            parts = str(args).split('+')
+            left_operand, right_operand = parts[0].strip() + parts[1].strip()
+            matrix = right_operand if right_operand.find(';') != -1 else left_operand
         else:
             if args in Matlab.class_vars:
                 print(Matlab.class_vars[args])
@@ -54,31 +59,23 @@ class Matlab(cmd.Cmd):
         Matlab.class_vars[vector] = result
         print(Matlab.class_vars[vector])
         
-    def compute_sum(self, a, b):
+    def create_matrix(self, parameter):
         '''
-            Compute sum of two numbers
+            Construct matrix from an argument that
+            resembles an array
         '''
-        return int(a) + int(b)
-        
-    def do_add_number_to_matrix(self, number):
+        parameter = parameter.strip('[] ')
+        parameter = parameter.replace(',', ' ')
+        parameter = parameter.replace(';', '\n')
+        return parameter
+    
+    def is_valid_matrix(self, parameter):
         '''
-            Add a number to a matrix. Convert the matrix
-            into a single long list then add the number to
-            each list element before turning it back into
-            a matrix once again
+            Check whether the argument passed is a valid
+            matrix meaning it it supposed to have uniform
+            dimensions
         '''
-#        matrix = Matlab.class_vars[matrix]
-#        r = list(self.compute_sum(number, matrix))
-        print(number)
-        
-    def do_greet(self, name):
-        '''
-            Greet name 
-        '''    
-        if name != None:
-            print(name)
-        else:
-            print('Hey you folks')
+        parameter = parameter.strip('[] ')
     
     def do_EOF(self, line):
         print('Exiting Application, Bye')
