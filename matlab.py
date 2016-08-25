@@ -29,7 +29,15 @@ class Matlab(cmd.Cmd):
                 print(args)
             else:
                 print('Undefined variable: ', args)
-   
+    
+    
+    def do_zeros(self, num_rows):
+        '''
+            Create a vector of zeros that is of size num_rows
+        '''
+        vector = "0\n"
+        vector *= int(num_rows)
+        print(vector)
     
     def do_EOF(self, line):
         return True
