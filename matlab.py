@@ -1,4 +1,4 @@
-import cmd, re, math
+import cmd, re, math, pickle
 
 class Matlab(cmd.Cmd):
     intro = 'Welcome to the MATLAB. Type help or ? to list commands.\n'
@@ -85,6 +85,26 @@ class Matlab(cmd.Cmd):
             item += int(number)
             result.append(str(item))
         print(result)
+        
+    def do_load(self, filename):
+        '''
+            Save data from a previous session
+            to workspace
+        '''
+        ext = '.mat'
+        file = filename + ext
+        with open(file, 'rb') as handle:
+            unserialized_data = pickle.load(handle)
+            print(unserialized_data)
+            
+    def do_save(self, filename):
+        '''
+            Save the variables in the working area
+        '''
+        ext = '.mat'
+        file = filename + ext
+        with open(file, 'wb') as handle:
+            pickle.dump(Matlab.class_vars, handle)
     
     def do_EOF(self, line):
         print('Exiting Application, Bye')
