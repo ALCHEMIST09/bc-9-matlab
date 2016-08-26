@@ -39,8 +39,9 @@ class Matlab(cmd.Cmd):
         elif args.find('+') != -1:
             # Case of adding a matrix and a number 
             parts = str(args).split('+')
-            left_operand, right_operand = parts[0].strip() + parts[1].strip()
-            matrix = right_operand if right_operand.find(';') != -1 else left_operand
+            left_operand = parts[0].strip()
+            right_operand = parts[1].strip()
+            self.add_number_to_matrix(left_operand, right_operand)
         else:
             if args in Matlab.class_vars:
                 print(Matlab.class_vars[args])
@@ -69,13 +70,21 @@ class Matlab(cmd.Cmd):
         parameter = parameter.replace(';', '\n')
         return parameter
     
-    def is_valid_matrix(self, parameter):
+    def add_number_to_matrix(self, number, matrix):
         '''
-            Check whether the argument passed is a valid
-            matrix meaning it it supposed to have uniform
-            dimensions
+            Add a number to a matrix
         '''
-        parameter = parameter.strip('[] ')
+        matrix = matrix.strip('[] ')
+        matrix = matrix.replace(', ', '')
+        matrix_order = matrix.find(';') 
+        matrix = matrix.replace('; ', '')
+        list_matrix = list(matrix)
+        result = []
+        for item in list_matrix:
+            item = int(item)
+            item += int(number)
+            result.append(str(item))
+        print(result)
     
     def do_EOF(self, line):
         print('Exiting Application, Bye')
